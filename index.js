@@ -13,13 +13,15 @@ const PaginationScalar = new GraphQLScalarType({
     // Valeurs par défaut
     const limit = value.limit ?? 10;
     const pageNumber = value.pageNumber ?? 1;
-    const skip = value.skip ?? 0;
+    const skip = value.skip ?? (pageNumber - 1) * limit; // Calcul automatique du skip
     const search = value.search ?? '';
     const sortBy = value.sortBy ?? 'id';
+    const customSearch = Array.isArray(value.customSearch) ? value.customSearch : [];
 
     // Validation des types
-    if (typeof limit !== 'number' || typeof pageNumber !== 'number' || (skip && typeof skip !== 'number') ||
-        (search && typeof search !== 'string') || (sortBy && typeof sortBy !== 'string')) {
+    if (typeof limit !== 'number' || typeof pageNumber !== 'number' ||
+        typeof skip !== 'number' || typeof search !== 'string' ||
+        typeof sortBy !== 'string' || !Array.isArray(customSearch)) {
       throw new Error("Invalid pagination input.");
     }
 
@@ -28,7 +30,8 @@ const PaginationScalar = new GraphQLScalarType({
       pageNumber,
       skip,
       search,
-      sortBy
+      sortBy,
+      customSearch
     };
   },
   parseLiteral(ast) {
