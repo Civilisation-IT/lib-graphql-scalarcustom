@@ -48,4 +48,32 @@ const PaginationScalar = new GraphQLScalarType({
   }
 });
 
-export default PaginationScalar;
+async function autoFind(pagination, searchFields = []) {
+  let query = {};
+
+  // Gestion du search global
+  if (pagination.search) {
+      query.$or = searchFields.map(field => ({
+          [field]: { $regex: pagination.search, $options: 'i' }
+      }));
+  }
+
+  // Gestion du customSearch
+  if (pagination.customSearch) {
+      const customSearchConditions = pagination.customSearch.map(condition => {
+          return { ...condition };
+      });
+
+      if (query.$or) {
+          // Combiner $or et $and si nécessaire
+          query = { $and: [query, { $or: customSearchConditions }] };
+      } else {
+          query.$and = customSearchConditions;
+      }
+  }
+
+  return query;
+}
+
+
+export{ PaginationScalar, autoFind };
