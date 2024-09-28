@@ -48,32 +48,33 @@ const PaginationScalar = new GraphQLScalarType({
   }
 });
 
-async function autoFind(pagination, searchFields = []) {
+async function autoFind(pagination, searchFields = [], additionalConditions = {}) {
   let query = {};
 
   // Gestion du search global
   if (pagination.search) {
-      query.$or = searchFields.map(field => ({
-          [field]: { $regex: pagination.search, $options: 'i' }
-      }));
+    query.$or = searchFields.map(field => ({
+      [field]: { $regex: pagination.search, $options: 'i' }
+    }));
   }
 
   // Gestion du customSearch
   if (pagination.customSearch) {
-      const customSearchConditions = pagination.customSearch.map(condition => {
-          return { ...condition };
-      });
+    const customSearchConditions = pagination.customSearch.map(condition => ({
+      ...condition
+    }));
 
-      if (query.$or) {
-          // Combiner $or et $and si nécessaire
-          query = { $and: [query, { $or: customSearchConditions }] };
-      } else {
-          query.$and = customSearchConditions;
-      }
+    if (query.$or) {
+      // Combiner $or et $and si nécessaire
+      query = { $and: [query, ...customSearchConditions, additionalConditions] };
+    } else {
+      query.$and = [...customSearchConditions, additionalConditions];
+    }
+  } else if (Object.keys(additionalConditions).length > 0) {
+    query = { ...query, ...additionalConditions };
   }
 
   return query;
 }
-
 
 export{ PaginationScalar, autoFind };
