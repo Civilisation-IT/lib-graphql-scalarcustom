@@ -17,6 +17,7 @@ const PaginationScalar = new GraphQLScalarType({
     const search = value.search ?? '';
     const sortBy = value.sortBy ?? 'id';
     const customSearch = Array.isArray(value.customSearch) ? value.customSearch : [];
+    const addons = Array.isArray(value.addons) ? value.addons : [];
 
     // Validation des types
     if (typeof limit !== 'number' || typeof pageNumber !== 'number' ||
@@ -31,7 +32,8 @@ const PaginationScalar = new GraphQLScalarType({
       skip,
       search,
       sortBy,
-      customSearch
+      customSearch,
+      addons
     };
   },
   parseLiteral(ast) {
