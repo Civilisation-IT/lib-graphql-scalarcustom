@@ -20,7 +20,7 @@ const PaginationScalar = new GraphQLScalarType({
     const addons = Array.isArray(value.addons) ? value.addons : [];
 
     // Validation des types
-    if (typeof limit !== 'number' || typeof pageNumber !== 'number' ||
+    if (typeof limit !== 'number' || typeof page !== 'number' ||
         typeof skip !== 'number' || typeof search !== 'string' ||
         typeof sortBy !== 'string' || !Array.isArray(customSearch)) {
       throw new Error("Invalid pagination input.");
