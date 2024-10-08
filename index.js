@@ -15,7 +15,7 @@ const PaginationScalar = new GraphQLScalarType({
     const page = value.page ?? 1;
     const skip = value.skip ?? (page - 1) * limit; // Calcul automatique du skip
     const search = value.search ?? '';
-    const sortBy = value.sortBy ?? 'id';
+    const sortBy = value.sortBy ?? '_id';
     const customSearch = Array.isArray(value.customSearch) ? value.customSearch : [];
     const addons = Array.isArray(value.addons) ? value.addons : [];
 
